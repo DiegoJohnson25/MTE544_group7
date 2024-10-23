@@ -29,7 +29,7 @@ class decision_maker(Node):
         super().__init__("decision_maker")
 
         #TODO Part 4: Create a publisher for the topic responsible for robot's motion
-        self.publisher=... 
+        self.publisher=self.create_publisher(publisher_msg, publishing_topic, 10)
 
         publishing_period=1/rate
         
@@ -90,7 +90,9 @@ class decision_maker(Node):
         velocity, yaw_rate = self.controller.vel_request(self.localizer.getPose(), self.goal, True)
 
         #TODO Part 4: Publish the velocity to move the robot
-        ... 
+        vel_msg.linear.x = velocity
+        vel_msg.angular.z = yaw_rate
+        self.publisher.publish(vel_msg)
 
 import argparse
 
@@ -107,9 +109,9 @@ def main(args=None):
 
     # TODO Part 4: instantiate the decision_maker with the proper parameters for moving the robot
     if args.motion.lower() == "point":
-        DM=decision_maker(...)
+        DM=decision_maker(Twist, "/cmd_vel", odom_qos, [args.goalx, args.goaly], motion_type=POINT_PLANNER)
     elif args.motion.lower() == "trajectory":
-        DM=decision_maker(...)
+        DM=decision_maker(Twist, "/cmd_vel", odom_qos, None, motion_type=TRAJECTORY_PLANNER)
     else:
         print("invalid motion type", file=sys.stderr)        
     
@@ -125,6 +127,8 @@ if __name__=="__main__":
 
     argParser=argparse.ArgumentParser(description="point or trajectory") 
     argParser.add_argument("--motion", type=str, default="point")
+    argParser.add_argument("--goalx", type=float, default=-1.0)
+    argParser.add_argument("--goaly", type=float, default=-1.0)
     args = argParser.parse_args()
 
     main(args)

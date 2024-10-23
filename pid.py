@@ -2,7 +2,7 @@ from rclpy.time import Time
 from utilities import Logger
 
 # Controller type
-P=0 # poportional
+P=0 # proportional
 PD=1 # proportional and derivative
 PI=2 # proportional and integral
 PID=3 # proportional, integral, derivative
@@ -81,11 +81,11 @@ class PID_ctrl:
         error_int=sum_*dt_avg
         
         # TODO Part 4: Log your errors
-        self.logger.log_values( ... )
+        self.logger.log_values( stamped_error )
         
         # TODO Part 4: Implement the control law of P-controller
         if self.type == P:
-            return ... # complete
+            return self.kp * latest_error
         
         # TODO Part 5: Implement the control law corresponding to each type of controller
         elif self.type == PD:
