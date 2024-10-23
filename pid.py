@@ -80,10 +80,10 @@ class PID_ctrl:
         
         error_int=sum_*dt_avg
         
-        # TODO Part 4: Log your errors
+        # Part 4: Log your errors
         self.logger.log_values( stamped_error )
         
-        # TODO Part 4: Implement the control law of P-controller
+        # Part 4: Implement the control law of P-controller
         if self.type == P:
             return self.kp * latest_error
         

@@ -28,7 +28,7 @@ class decision_maker(Node):
 
         super().__init__("decision_maker")
 
-        #TODO Part 4: Create a publisher for the topic responsible for robot's motion
+        #Part 4: Create a publisher for the topic responsible for robot's motion
         self.publisher=self.create_publisher(publisher_msg, publishing_topic, 10)
 
         publishing_period=1/rate
@@ -99,7 +99,7 @@ class decision_maker(Node):
         
         velocity, yaw_rate = self.controller.vel_request(self.localizer.getPose(), self.goal, True)
 
-        #TODO Part 4: Publish the velocity to move the robot
+        # Part 4: Publish the velocity to move the robot
         vel_msg.linear.x = velocity
         vel_msg.angular.z = yaw_rate
         self.publisher.publish(vel_msg)
@@ -117,7 +117,7 @@ def main(args=None):
     odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
     
 
-    # TODO Part 4: instantiate the decision_maker with the proper parameters for moving the robot
+    # Part 4: instantiate the decision_maker with the proper parameters for moving the robot
     if args.motion.lower() == "point":
         DM=decision_maker(Twist, "/cmd_vel", odom_qos, [args.goalx, args.goaly], motion_type=POINT_PLANNER)
     elif args.motion.lower() == "trajectory":
