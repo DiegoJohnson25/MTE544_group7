@@ -1,4 +1,4 @@
-from math import atan2, asin, copysign, pi
+from math import atan2, asin, sqrt, copysign, pi
 
 M_PI=3.1415926535
 
@@ -99,7 +99,7 @@ def euler_from_quaternion(quat):
     pitch = asin(sinp) if abs(sinp) < 1 else copysign(pi / 2, sinp)
 
     # Yaw (around z-axis) - R_21, R_11
-    yaw = atan2(w ** 2 + x ** 2 - y ** 2 - z ** 2, 2 * (w * z + x * y))
+    yaw = atan2(2 * (w * z + x * y), 1 - 2 * (y**2 + z**2))
 
     # just unpack yaw
     return yaw
@@ -128,7 +128,7 @@ def calculate_angular_error(current_pose, goal_pose):
     error_x = goal_pose[0] - current_pose[0]
     error_y = goal_pose[1] - current_pose[1]
 
-    goal_theta = atan2(error_y/error_x)
+    goal_theta = atan2(error_y, error_x)
     current_theta = current_pose[2]
 
     error_angular = goal_theta - current_theta
@@ -137,7 +137,7 @@ def calculate_angular_error(current_pose, goal_pose):
 
     while(error_angular > M_PI):
         error_angular -= (2*M_PI)
-    while(error_angular < M_PI):
+    while(error_angular < -M_PI):
         error_angular += (2*M_PI)
     
     return error_angular
