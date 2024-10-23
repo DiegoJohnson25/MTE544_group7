@@ -45,4 +45,4 @@ class planner:
         else:
             # Upper bound of 2.5 for the sigmoid trajectory
             x_values = make_x_values(2.5)
-            return [(x, 2 / (1 + e^(-2 * x)) - 1) for x in x_values]
+            return [(x, 2 / (1 + e**(-2 * x)) - 1) for x in x_values]

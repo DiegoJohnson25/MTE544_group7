@@ -72,7 +72,7 @@ class decision_maker(Node):
         vel_msg=Twist()
         
         # Part 3: Check if you reached the goal
-        error_threshold = 1e-4
+        error_threshold = 1e-2
 
         if type(self.goal) == list:
             # Trajectory: get the last point in the list of points, and check error threshold
