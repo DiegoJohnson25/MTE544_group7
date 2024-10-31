@@ -8,7 +8,7 @@ TR_PARABOLA=0; TR_SIGMOID=1
 
 # Use a global variable to select the trajectory, as recommended. Default = parabola
 # Change this value to change the trajectory
-tr_type = TR_PARABOLA
+tr_type = TR_SIGMOID
 
 class planner:
     def __init__(self, type_):

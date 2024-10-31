@@ -37,12 +37,12 @@ class decision_maker(Node):
         # TODO Part 5: Tune your parameters here
     
         if motion_type == POINT_PLANNER:
-            self.controller=controller(klp=0.2, klv=0.5, kap=0.8, kav=0.6)
+            self.controller=controller(klp=0.1, klv=0.5, kli=0.5, kap=1.5, kav=0.6, kai=0.5)
             self.planner=planner(POINT_PLANNER)    
     
     
         elif motion_type==TRAJECTORY_PLANNER:
-            self.controller=trajectoryController(klp=0.2, klv=0.5, kap=0.8, kav=0.6)
+            self.controller=trajectoryController(klp=0.1, klv=0.5, kli=0.5, kap=1.5, kav=0.6, kai=0.5)
             self.planner=planner(TRAJECTORY_PLANNER)
 
         else:
@@ -72,7 +72,7 @@ class decision_maker(Node):
         vel_msg=Twist()
         
         # Part 3: Check if you reached the goal
-        error_threshold = 1e-2
+        error_threshold = 2e-2
 
         if type(self.goal) == list:
             # Trajectory: get the last point in the list of points, and check error threshold
