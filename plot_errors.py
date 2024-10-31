@@ -2,11 +2,11 @@ import matplotlib.pyplot as plt
 from utilities import FileReader
 
 def make_plots(files, title):
-    fig, axes = plt.subplots(3,2, figsize=(14,14))
+    fig, axes = plt.subplots(3,2, figsize=(14,10))
     fig.suptitle(title)
 
     # x-y, x-t, y-t, theta-t
-    make_plot_row(axes, files[0], row=0, sp_title="X vs. Y", state_title="X, Y, and Theta vs. Time", create_points=True, point_file="/home/diego/MTE544_group7/Data/NewParabola/parabola_points.csv",
+    make_plot_row(axes, files[0], row=0, sp_title="X vs. Y", state_title="X, Y, and Theta vs. Time", create_points=False, point_file="/home/diego/MTE544_group7/Data/NewSigmoid/sigmoid_points.csv",
                   y1 = "X-Coordinate [m]", x1 = "Y-Coordinate [m]", y2 = "Robot Pose [m], [m], [rad]", x2 = "Time [ns]")
 
     # e-t, edot-t, e-edot (linear)
