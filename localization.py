@@ -57,7 +57,7 @@ class localization(Node):
         
         self.kf=kalman_filter(P,Q,R, x, dt)
         
-        # TODO Part 3: Use the odometry and IMU data for the EKF
+        # Part 3: Use the odometry and IMU data for the EKF
         self.odom_sub=message_filters.Subscriber("/odom", odom)
         self.imu_sub=message_filters.Subscriber("/imu", imu)
         
