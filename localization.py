@@ -45,15 +45,17 @@ class localization(Node):
         
     def initKalmanfilter(self, dt):
         
-        # TODO Part 3: Set up the quantities for the EKF (hint: you will need the functions for the states and measurements)
+        # Part 3: Set up the quantities for the EKF (hint: you will need the functions for the states and measurements)
         
+        # Set all initial conditions to 0
         x= np.array([0, 0, 0, 0, 0, 0]) # x, y, th, w, v, vdot
         
         Q= 0.5 * np.eye(6)
 
         R= 0.5 * np.eye(4)
         
-        P= ... # initial covariance
+        # Choose Q as the initial covariance matrix
+        P= Q
         
         self.kf=kalman_filter(P,Q,R, x, dt)
         
