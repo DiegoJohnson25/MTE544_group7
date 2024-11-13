@@ -16,6 +16,9 @@ from localization import localization, rawSensors, kalmanFilter
 from planner import TRAJECTORY_PLANNER, POINT_PLANNER, SPIRAL_4TUNE, planner
 from controller import controller, trajectoryController
 
+#************* Part 3: use the Kalman Filter parameters
+USE_KALMAN = True
+TIMESTEP = 0.01
 
 class decision_maker(Node):
     
@@ -32,8 +35,8 @@ class decision_maker(Node):
         self.reachThreshold=0.01
 
 
-        # TODO Part 3: use the Kalman Filter
-        self.localizer=localization(...)
+        # Part 3: use the Kalman Filter
+        self.localizer=localization(USE_KALMAN, TIMESTEP)
         
         if motion_type==POINT_PLANNER:
             self.controller=controller(klp=0.2, klv=0.5, kap=0.8, kav=0.6)      
