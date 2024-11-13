@@ -18,7 +18,7 @@ from controller import controller, trajectoryController
 
 #************* Part 3: use the Kalman Filter parameters
 USE_KALMAN = True
-TIMESTEP = 0.01
+TIMESTEP = 0.1
 
 class decision_maker(Node):
     

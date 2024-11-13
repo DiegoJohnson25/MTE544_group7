@@ -55,7 +55,7 @@ class localization(Node):
         R= 0.5 * np.eye(4)
         
         # Choose Q as the initial covariance matrix
-        P= Q
+        P= Q.copy()
         
         self.kf=kalman_filter(P,Q,R, x, dt)
         
@@ -77,7 +77,7 @@ class localization(Node):
         # Get linear and angular velocity data from odom msg and calculate v and w
         linear_vel = odom_msg.twist.twist.linear
         angular_vel = odom_msg.twist.twist.angular
-        odom_v = np.sqrt(linear_vel.x**2 + linear_vel.y**2 + linear_vel.z**2)
+        odom_v = linear_vel.x
         odom_w = angular_vel.z
 
         # Get acceleration data from imu msg and extract ax and ay
@@ -113,6 +113,7 @@ class localization(Node):
                     pose_msg.pose.pose.position.y,
                     euler_from_quaternion(pose_msg.pose.pose.orientation),
                     pose_msg.header.stamp]
+        self.loc_logger.log_values([0, 0, 0, 0, 0, self.pose[2], self.pose[0], self.pose[1], Time.from_msg(self.pose[3]).nanoseconds])
 
     # Return the estimated pose
     def getPose(self):
