@@ -68,29 +68,36 @@ class localization(Node):
     
     def fusion_callback(self, odom_msg: odom, imu_msg: Imu):
         
-        # TODO Part 3: Use the EKF to perform state estimation
+        # Part 3: Use the EKF to perform state estimation
         # Take the measurements
         # your measurements are the linear velocity and angular velocity from odom msg
         # and linear acceleration in x and y from the imu msg
         # the kalman filter should do a proper integration to provide x,y and filter ax,ay
-        linear_vel = odom.twist.twist.linear
-        angular_vel = odom.twist.twist.angular
-        z=np.array([
-            numpy.sqrt(linear_vel.x**2 + linear_vel.y**2 + linear_vel.z**2), # v
-            angular_vel.z, # w **Not sure which is actual angular velocity (x, y, z)**
-            imu.linear_acceleration.x, # ax
-            imu.linear_acceleration.y  # ay
-        ])
+
+        # Get linear and angular velocity data from odom msg and calculate v and w
+        linear_vel = odom_msg.twist.twist.linear
+        angular_vel = odom_msg.twist.twist.angular
+        odom_v = np.sqrt(linear_vel.x**2 + linear_vel.y**2 + linear_vel.z**2)
+        odom_w = angular_vel.z
+
+        # Get acceleration data from imu msg and extract ax and ay
+        imu_ax = imu_msg.linear_acceleration.x
+        imu_ay = imu_msg.linear_acceleration.y
+        z=np.array([odom_v, odom_w, imu_ax, imu_ay])
         
         # Implement the two steps for estimation
         self.kf.predict()
         self.kf.update(z)
         
         # Get the estimate
+        # [x, y, th, w, v, vdot]
         xhat=self.kf.get_states()
 
         # Update the pose estimate to be returned by getPose
-        self.pose=np.array(...)
+        kf_x = xhat[0]
+        kf_y = xhat[1]
+        kf_th = xhat[2]
+        self.pose=np.array([kf_x, kf_y, kf_th, odom_msg.header.stamp])
 
         # TODO Part 4: log your data
         self.loc_logger.log_values(...)
