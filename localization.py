@@ -29,7 +29,7 @@ class localization(Node):
 
         super().__init__("localizer")
 
-        elf.loc_logger=Logger( loggerName , loggerHeaders)
+        self.loc_logger=Logger( loggerName , loggerHeaders)
         self.pose=None
         
         if type==rawSensors:
@@ -45,45 +45,67 @@ class localization(Node):
         
     def initKalmanfilter(self, dt):
         
-        # TODO Part 3: Set up the quantities for the EKF (hint: you will need the functions for the states and measurements)
+        # Part 3: Set up the quantities for the EKF (hint: you will need the functions for the states and measurements)
         
-        x= ...
+        # Set all initial conditions to 0
+        x= np.array([0, 0, 0, 0, 0, 0]) # x, y, th, w, v, vdot
         
-        Q= ...
+        Q= 0.5 * np.eye(6)
 
-        R= ...
+        R= 0.5 * np.eye(4)
         
-        P= ... # initial covariance
+        # Choose Q as the initial covariance matrix
+        P= Q
         
         self.kf=kalman_filter(P,Q,R, x, dt)
         
-        # TODO Part 3: Use the odometry and IMU data for the EKF
-        self.odom_sub=message_filters.Subscriber(...)
-        self.imu_sub=message_filters.Subscriber(...)
+        # Part 3: Use the odometry and IMU data for the EKF
+        self.odom_sub=message_filters.Subscriber(self, odom, "/odom")
+        self.imu_sub=message_filters.Subscriber(self, Imu, "/imu")
         
         time_syncher=message_filters.ApproximateTimeSynchronizer([self.odom_sub, self.imu_sub], queue_size=10, slop=0.1)
         time_syncher.registerCallback(self.fusion_callback)
     
     def fusion_callback(self, odom_msg: odom, imu_msg: Imu):
         
-        # TODO Part 3: Use the EKF to perform state estimation
+        # Part 3: Use the EKF to perform state estimation
         # Take the measurements
         # your measurements are the linear velocity and angular velocity from odom msg
         # and linear acceleration in x and y from the imu msg
         # the kalman filter should do a proper integration to provide x,y and filter ax,ay
-        z=...
+
+        # Get linear and angular velocity data from odom msg and calculate v and w
+        linear_vel = odom_msg.twist.twist.linear
+        angular_vel = odom_msg.twist.twist.angular
+        odom_v = np.sqrt(linear_vel.x**2 + linear_vel.y**2 + linear_vel.z**2)
+        odom_w = angular_vel.z
+
+        # Get acceleration data from imu msg and extract ax and ay
+        imu_ax = imu_msg.linear_acceleration.x
+        imu_ay = imu_msg.linear_acceleration.y
+        z=np.array([odom_v, odom_w, imu_ax, imu_ay])
         
         # Implement the two steps for estimation
-        ...
+        self.kf.predict()
+        self.kf.update(z)
         
         # Get the estimate
+        # [x, y, th, w, v, vdot]
         xhat=self.kf.get_states()
 
         # Update the pose estimate to be returned by getPose
-        self.pose=np.array(...)
+        kf_x = xhat[0]
+        kf_y = xhat[1]
+        kf_th = xhat[2]
+        self.pose=np.array([kf_x, kf_y, kf_th, odom_msg.header.stamp])
 
-        # TODO Part 4: log your data
-        self.loc_logger.log_values(...)
+        # Part 4: log your data
+        # loggerHeaders=["imu_ax", "imu_ay", "kf_ax", "kf_ay","kf_vx","kf_w","kf_x", "kf_y","stamp"]
+        kf_w = xhat[3]
+        kf_vx = xhat[4]
+        kf_ax = xhat[5]
+        kf_ay = kf_vx*kf_w
+        self.loc_logger.log_values([imu_ax, imu_ay, kf_ax, kf_ay, kf_vx, kf_w, kf_x, kf_y, Time.from_msg(self.pose[3]).nanoseconds])
       
     def odom_callback(self, pose_msg):
         
