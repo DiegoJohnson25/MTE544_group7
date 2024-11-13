@@ -99,8 +99,13 @@ class localization(Node):
         kf_th = xhat[2]
         self.pose=np.array([kf_x, kf_y, kf_th, odom_msg.header.stamp])
 
-        # TODO Part 4: log your data
-        self.loc_logger.log_values(...)
+        # Part 4: log your data
+        # loggerHeaders=["imu_ax", "imu_ay", "kf_ax", "kf_ay","kf_vx","kf_w","kf_x", "kf_y","stamp"]
+        kf_w = xhat[3]
+        kf_vx = xhat[4]
+        kf_ax = xhat[5]
+        kf_ay = kf_vx*kf_w
+        self.loc_logger.log_values([imu_ax, imu_ay, kf_ax, kf_ay, kf_vx, kf_w, kf_x, kf_y, Time.from_msg(self.pose[3]).nanoseconds])
       
     def odom_callback(self, pose_msg):
         
