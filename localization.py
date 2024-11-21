@@ -25,7 +25,7 @@ odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
 
 class localization(Node):
     
-    def __init__(self, type, dt, loggerName="robotPose.csv", loggerHeaders=["imu_ax", "imu_ay", "kf_ax", "kf_ay","kf_vx","kf_w","kf_x", "kf_y","stamp"]):
+    def __init__(self, type, dt, loggerName="robotPose.csv", loggerHeaders=["imu_ax", "imu_ay", "odom_v", "odom_w", "odom_x", "odom_y", "kf_ax", "kf_ay","kf_vx","kf_w","kf_x", "kf_y","stamp"]):
 
         super().__init__("localizer")
 
@@ -50,9 +50,9 @@ class localization(Node):
         # Set all initial conditions to 0
         x= np.array([0, 0, 0, 0, 0, 0]) # x, y, th, w, v, vdot
         
-        Q= 0.5 * np.eye(6)
+        Q= 0.85 * np.eye(6)
 
-        R= 0.5 * np.eye(4)
+        R= 0.2 * np.eye(4)
         
         # Choose Q as the initial covariance matrix
         P= Q.copy()
@@ -60,8 +60,8 @@ class localization(Node):
         self.kf=kalman_filter(P,Q,R, x, dt)
         
         # Part 3: Use the odometry and IMU data for the EKF
-        self.odom_sub=message_filters.Subscriber(self, odom, "/odom")
-        self.imu_sub=message_filters.Subscriber(self, Imu, "/imu")
+        self.odom_sub=message_filters.Subscriber(self, odom, "/odom", qos_profile = odom_qos)
+        self.imu_sub=message_filters.Subscriber(self, Imu, "/imu", qos_profile = odom_qos)
         
         time_syncher=message_filters.ApproximateTimeSynchronizer([self.odom_sub, self.imu_sub], queue_size=10, slop=0.1)
         time_syncher.registerCallback(self.fusion_callback)
@@ -105,7 +105,9 @@ class localization(Node):
         kf_vx = xhat[4]
         kf_ax = xhat[5]
         kf_ay = kf_vx*kf_w
-        self.loc_logger.log_values([imu_ax, imu_ay, kf_ax, kf_ay, kf_vx, kf_w, kf_x, kf_y, Time.from_msg(self.pose[3]).nanoseconds])
+        odom_x = odom_msg.pose.pose.position.x
+        odom_y = odom_msg.pose.pose.position.y
+        self.loc_logger.log_values([imu_ax, imu_ay, odom_v, odom_w, odom_x, odom_y, kf_ax, kf_ay, kf_vx, kf_w, kf_x, kf_y, Time.from_msg(self.pose[3]).nanoseconds])
       
     def odom_callback(self, pose_msg):
         

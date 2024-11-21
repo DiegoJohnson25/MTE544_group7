@@ -17,20 +17,29 @@ def plot_errors(filename):
 
     
     
-    fig, axes = plt.subplots(2,1, figsize=(14,6))
+    fig, axes = plt.subplots(2,1, figsize=(10,12))
 
 
-    axes[0].plot([lin[len(headers) - 3] for lin in values], [lin[len(headers) - 2] for lin in values])
-    axes[0].set_title("state space")
+    axes[0].plot([lin[len(headers) - 3] for lin in values], [lin[len(headers) - 2] for lin in values], label = "Kalman Filter")
+    axes[0].plot([lin[4] for lin in values], [lin[5] for lin in values], label = "Odometery")
+    axes[0].set_title("State Space")
+    axes[0].legend()
     axes[0].grid()
+    axes[0].set_xlabel("Position in X Direction (m)")
+    axes[0].set_ylabel("Position in Y Direction (m)")
 
     
-    axes[1].set_title("each individual state")
+    axes[1].set_title("Each individual state")
     for i in range(0, len(headers) - 1):
         axes[1].plot(time_list, [lin[i] for lin in values], label= headers[i])
 
-    axes[1].legend()
+    box = axes[1].get_position()
+    axes[1].set_position([box.x0, box.y0, box.width*0.8, box.height])
+
+    axes[1].legend(loc='center left', bbox_to_anchor=(1, 0.5))
     axes[1].grid()
+    axes[1].set_xlabel("ROS Header Timestamp (ns)")
+    axes[1].set_ylabel("Value (Check legend for respective units)")
 
     plt.show()
     
