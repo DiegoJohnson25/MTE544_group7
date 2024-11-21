@@ -29,7 +29,7 @@ def plot_errors(filename):
     axes[0].set_ylabel("Position in Y Direction (m)")
 
     
-    axes[1].set_title("Each individual state")
+    axes[1].set_title("Measurements")
     for i in range(0, len(headers) - 1):
         axes[1].plot(time_list, [lin[i] for lin in values], label= headers[i])
 
