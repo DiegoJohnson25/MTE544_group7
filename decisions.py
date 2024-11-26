@@ -45,8 +45,8 @@ class decision_maker(Node):
         # TODO PART 5 choose your threshold
         self.reachThreshold=...
 
-        # TODO PART 5 your localization type
-        self.localizer=localization(...)
+        # PART 5 your localization type
+        self.localizer=localization(kalmanFilter)
 
 
         
