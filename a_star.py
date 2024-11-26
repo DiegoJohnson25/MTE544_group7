@@ -92,14 +92,14 @@ def search(maze, start, end):
 
     # TODO PART 4 what squares do we search . serarch movement is left-right-top-bottom
     # (4 or 8 movements) from every positon
-    move = [[...],  # go up
-            [...],  # go left
-            [...],  # go down
-            [...],  # go right
-            [...],  # go up left
-            [...],  # go down left
-            [...],  # go up right
-            [...]]  # go down right
+    move = [[-1, 0],  # go up
+            [0, -1],  # go left
+            [1, 0],  # go down
+            [0, 1],  # go right
+            [-1, -1],  # go up left
+            [1, -1],  # go down left
+            [-1, 1],  # go up right
+            [1, 1]]  # go down right
 
     """
         1) We first get the current node by comparing all f cost and selecting the lowest cost node for further expansion
@@ -118,8 +118,8 @@ def search(maze, start, end):
                 c) if child in yet_to_visit dict then ignore it
                 d) else move the child to yet_to_visit dict
     """
-    # TODO PART 4 find maze has got how many rows and columns
-    no_rows, no_columns = ...
+    # PART 4 find maze has got how many rows and columns
+    no_rows, no_columns = np.shape(maze)
 
     # Loop until you find the end
 
@@ -156,11 +156,11 @@ def search(maze, start, end):
 
         for new_position in move:
 
-            # TODO PART 4 Get node position
-            node_position = (...)
+            # PART 4 Get node position
+            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
-            # TODO PART 4 Make sure within range (check if within maze boundary)
-            if (...):
+            # PART 4 Make sure within range (check if within maze boundary)
+            if (node_position[0] < 0 or node_position[0] >= no_columns) or (node_position[1] < 0 or node_position[1] >= no_columns):
                 continue
 
             # Make sure walkable terrain
