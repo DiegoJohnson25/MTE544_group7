@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from math import sqrt
+from math import sqrt, inf, abs
 
 
 class Node:
@@ -23,6 +23,25 @@ class Node:
 
     def __eq__(self, other):
         return self.position == other.position
+
+# Global flag for choosing heuristic; also compute the Manhattan and Euclidean distances
+EUCLIDEAN = 0
+MANHATTAN = 1
+USE_HEURISTIC = EUCLIDEAN
+
+def apply_heuristic(start_pos, end_pos):
+    def euclidean(start_pos, end_pos):
+        x1, y1 = start_pos
+        x2, y2 = end_pos
+        return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+    def manhattan(start_pos, end_pos):
+        x1, y1 = start_pos
+        x2, y2 = end_pos
+        return abs(x1 - x2) + abs(y1 - y2)
+    
+    return euclidean(start_pos, end_pos) if USE_HEURISTIC == EUCLIDEAN else manhattan(start_pos, end_pos)
+
 
 # This function return the path of the search
 
@@ -64,15 +83,17 @@ def search(maze, start, end):
 
     # TODO PART 4 Create start and end node with initized values for g, h and f
     # Use None as parent if not defined
-    start_node = Node(...)
-    start_node.g = ...     # cost from start Node
+    start_node = Node(None, start)
+    start_node.g = 0     # cost from start Node
     start_node.h = ...     # heuristic estimated cost to end Node
-    start_node.f = ...
+    # Use epsilon = 1 for "optimal" A*
+    start_node.f = start_node.g + start_node.h
 
-    end_node = Node(...)
-    end_node.g = ...       # set a large value if not defined
+    end_node = Node(None, end)
+    end_node.g = inf       # set a large value if not defined
     end_node.h = ...       # heuristic estimated cost to end Node
-    end_node.f = ...
+    # Use epsilon = 1 for "optimal" A*
+    end_node.f = end_node.g + end_node.h
 
     # Initialize both yet_to_visit and visited dictionary
     # in this dict we will put all node that are yet_to_visit for exploration.
