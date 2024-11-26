@@ -24,12 +24,13 @@ class Node:
     def __eq__(self, other):
         return self.position == other.position
 
-# Global flag for choosing heuristic; also compute the Manhattan and Euclidean distances
+# Global flag for choosing heuristic. Modify USE_HEURISTIC to select.
 EUCLIDEAN = 0
 MANHATTAN = 1
 USE_HEURISTIC = EUCLIDEAN
 
-def apply_heuristic(start_pos, end_pos):
+# Compute either Euclidean or Manhattan distance
+def distance(start_pos, end_pos):
     def euclidean(start_pos, end_pos):
         x1, y1 = start_pos
         x2, y2 = end_pos
@@ -81,17 +82,17 @@ def search(maze, start, end):
         :return:
     """
 
-    # TODO PART 4 Create start and end node with initized values for g, h and f
+    # PART 4 Create start and end node with initized values for g, h and f
     # Use None as parent if not defined
     start_node = Node(None, start)
     start_node.g = 0     # cost from start Node
-    start_node.h = ...     # heuristic estimated cost to end Node
+    start_node.h = distance(start, end)     # heuristic estimated cost to end Node
     # Use epsilon = 1 for "optimal" A*
     start_node.f = start_node.g + start_node.h
 
     end_node = Node(None, end)
     end_node.g = inf       # set a large value if not defined
-    end_node.h = ...       # heuristic estimated cost to end Node
+    end_node.h = 0      # heuristic estimated cost to end Node
     # Use epsilon = 1 for "optimal" A*
     end_node.f = end_node.g + end_node.h
 
@@ -181,10 +182,10 @@ def search(maze, start, end):
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             # PART 4 Make sure within range (check if within maze boundary)
-            if (node_position[0] < 0 or node_position[0] >= no_columns) or (node_position[1] < 0 or node_position[1] >= no_columns):
+            if (node_position[0] < 0 or node_position[0] >= no_rows) or (node_position[1] < 0 or node_position[1] >= no_columns):
                 continue
 
-            # Make sure walkable terrain
+            # Make sure walkable terrain (0.8 threshold)
             if maze[node_position[0], node_position[1]] > 0.8:
                 continue
 
@@ -198,14 +199,17 @@ def search(maze, start, end):
 
         for child in children:
 
-            # TODO PART 4 Child is on the visited dict (use get method to check if child is in visited dict, if not found then default value is False)
-            if ():
+            # PART 4 Child is on the visited dict (use get method to check if child is in visited dict, if not found then default value is False)
+            if (visited_dict.get(child.position, False)):
                 continue
 
-            # TODO PART 4 Create the f, g, and h values
-            child.g = ...
+            # PART 4 Create the f, g, and h values
+            # Tenatative g cost is equivalent to the g of the current node (child's parent) plus
+            # the distance from the current node (child's parent) to the neighbour (the chil itself)
+            # For Manhattan this always equals the step defined in 'move'. For Euclidean, diagonals are considered.
+            child.g = current_node.g + distance(child.position, current_node.position)
             # Heuristic costs calculated here, this is using eucledian distance
-            child.h = ...
+            child.h = distance(child.position, end)
 
             child.f = child.g + child.h
 
