@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from math import sqrt, inf, abs
+from math import sqrt, inf
 
 
 class Node:
