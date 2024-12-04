@@ -28,7 +28,7 @@ class planner:
     def initTrajectoryPlanner(self):
 
 
-        # TODO PART 5 Create the cost-map, the laser_sig is 
+        # PART 5 Create the cost-map, the laser_sig is 
         # the standard deviation for the gausiian for which
         # the mean is located on the occupant grid. 
         self.m_utilites=mapManipulator(laser_sig=0.4)
